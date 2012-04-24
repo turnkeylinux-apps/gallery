@@ -4,18 +4,27 @@ NameVirtualHost *:443
 <VirtualHost *:80>
     UseCanonicalName Off
     ServerAdmin  webmaster@localhost
-    DocumentRoot /usr/share/gallery2
+    DocumentRoot /var/www/gallery
 </VirtualHost>
 
 <VirtualHost *:443>
     SSLEngine on
     SSLCertificateFile /etc/ssl/certs/cert.pem
     ServerAdmin  webmaster@localhost
-    DocumentRoot /usr/share/gallery2
+    DocumentRoot /var/www/gallery
 </VirtualHost>
 
-<Directory /usr/share/gallery2>
+<Directory /var/www/gallery>
     Options +FollowSymLinks
+
+    RewriteEngine On
+    RewriteBase /
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php?kohana_uri=$1 [QSA,PT,L]
+    RewriteRule ^$ index.php?kohana_uri=$1 [QSA,PT,L]
+    RewriteRule ^index.php/(.*) $1 [QSA,R,L]
+
     AllowOverride Limit Options FileInfo
     order allow,deny
     allow from all

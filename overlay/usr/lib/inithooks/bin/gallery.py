@@ -12,7 +12,6 @@ import getopt
 import hashlib
 import random
 import string
-import shutil
 
 from dialog_wrapper import Dialog
 from mysqlconf import MySQL
@@ -60,12 +59,8 @@ def main():
     hashpass = salt + hashlib.md5(salt + password).hexdigest()
 
     m = MySQL()
-    m.execute('UPDATE gallery2.g2_User SET g_email=\"%s\" WHERE g_userName=\"admin\";' % email)
-    m.execute('UPDATE gallery2.g2_User SET g_hashedPassword=\"%s\" WHERE g_userName=\"admin\";' % hashpass)
-
-    # delete cache so it will be rebuilt for new domain
-    shutil.rmtree("/var/lib/gallery2/g2data/cache/entity", ignore_errors=True)
-
+    m.execute('UPDATE gallery.users SET email=\"%s\" WHERE name=\"admin\";' % email)
+    m.execute('UPDATE gallery.users SET password=\"%s\" WHERE name=\"admin\";' % hashpass)
 
 if __name__ == "__main__":
     main()

@@ -1,14 +1,10 @@
 #include <turnkey/base>
 #include <turnkey/lamp>
 
-gallery2
+ffmpeg          /* support video uploading */
 
-dcraw
-jhead
-libjpeg-progs
 php5-gd
+php5-cli
 unzip
 zip
-
-curl            /* used to configure gallery2 */
 

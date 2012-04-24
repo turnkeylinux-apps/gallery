@@ -1,0 +1,14 @@
+#include <turnkey/base>
+#include <turnkey/lamp>
+
+gallery2
+
+dcraw
+jhead
+libjpeg-progs
+php5-gd
+unzip
+zip
+
+curl            /* used to configure gallery2 */
+

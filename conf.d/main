@@ -1,0 +1,66 @@
+#!/bin/sh -ex
+
+NAME=gallery2
+DB_PASS=$(mcookie)
+ADMIN_PASS=turnkey
+ADMIN_MAIL=admin@example.com
+
+ETC=/etc/gallery2
+SHARE=/usr/share/gallery2
+
+# convenience symlinks
+ln -s $SHARE /var/www/webroot
+ln -s $ETC /var/www/config
+
+# configure apache
+rm -f /etc/apache2/conf.d/gallery2
+touch /etc/apache2/conf.d/gallery2
+ln -s /etc/gallery2/apache.conf /etc/apache2/sites-available/gallery2
+a2dissite default
+a2ensite gallery2
+
+# configure rewrite support, not activated
+a2enmod rewrite
+touch $ETC/htaccess
+chown www-data:root $ETC/htaccess
+ln -s $ETC/htaccess $SHARE/.htaccess
+
+# start mysql
+/etc/init.d/mysql start
+
+# create gallery2 user
+mysql --user=root --password=$MYSQL_PASS --batch --execute "\
+GRANT ALL PRIVILEGES ON $NAME.* TO $NAME@localhost IDENTIFIED BY '$DB_PASS'; \
+FLUSH PRIVILEGES;"
+
+# configure gallery2
+/etc/init.d/apache2 start
+CURL="curl -c /tmp/cookie -b /tmp/cookie"
+STEP="http://127.0.0.1/install/index.php?step="
+
+$CURL ${STEP}0
+$CURL "${STEP}1&downloadLogin=1" > $SHARE/login.txt
+$CURL ${STEP}2
+$CURL ${STEP}3
+$CURL --data "isMultisite=0&configPath=" ${STEP}3
+$CURL ${STEP}4
+$CURL --data "dir=/var/lib/gallery2/g2data&action=save" ${STEP}4
+$CURL ${STEP}5
+$CURL --data "type=mysqli&hostname=localhost&action=save&confirmReuseTables=&confirmCleanInstall=&username=$NAME&password=$DB_PASS&database=$NAME&tablePrefix=g2_&columnPrefix=g_" ${STEP}5
+$CURL ${STEP}6
+$CURL --data "adminName=admin&passwordA=$ADMIN_PASS&action=create&passwordB=$ADMIN_PASS&email=$ADMIN_MAIL&fullName=Admin" ${STEP}6
+$CURL ${STEP}7
+$CURL ${STEP}8
+$CURL ${STEP}9
+$CURL --data "module%5Balbumselect%5D=on&module%5Bimageblock%5D=on&module%5Barchiveupload%5D=on&module%5Bitemadd%5D=on&module%5Bmigrate%5D=on&module%5Bnokiaupload%5D=on&module%5Bpicasa%5D=on&module%5Bpublishxp%5D=on&module%5Buploadapplet%5D=on&module%5Bwebcam%5D=on&module%5Bcaptcha%5D=on&module%5Bdebug%5D=on&module%5Bmembers%5D=on&module%5Bpermalinks%5D=on&module%5Bquotas%5D=on&module%5Brearrange%5D=on&module%5Bregister%5D=on&module%5Brewrite%5D=on&module%5Bsearch%5D=on&module%5Buseralbum%5D=on&module%5Bcart%5D=on&module%5Bdigibug%5D=on&module%5Becard%5D=on&module%5Bfotokasten%5D=on&module%5Bphotoaccess%5D=on&module%5Bshutterfly%5D=on&module%5Bzipcart%5D=on&module%5Bcolorpack%5D=on&module%5Bdynamicalbum%5D=on&module%5Bflashvideo%5D=on&module%5Bhidden%5D=on&module%5Bicons%5D=on&module%5Bimageframe%5D=on&module%5Bkeyalbum%5D=on&module%5Blinkitem%5D=on&module%5Bmp3audio%5D=on&module%5Bmultiroot%5D=on&module%5Bnewitems%5D=on&module%5Bpanorama%5D=on&module%5Bpassword%5D=on&module%5Brandomhighlight%5D=on&module%5Breplica%5D=on&module%5Bsizelimit%5D=on&module%5Bslideshow%5D=on&module%5Bslideshowapplet%5D=on&module%5Bsquarethumb%5D=on&module%5Bthumbnail%5D=on&module%5Bthumbpage%5D=on&module%5Bwatermark%5D=on&module%5Bcomment%5D=on&module%5Bcustomfield%5D=on&module%5Bexif%5D=on&module%5Bgetid3%5D=on&module%5Bmime%5D=on&module%5Bmultilang%5D=on&module%5Brating%5D=on&module%5Breupload%5D=on&module%5Bdcraw%5D=on&module%5Bffmpeg%5D=on&module%5Bimagemagick%5D=on&module%5Bnetpbm%5D=on&module%5Bgd%5D=on&module%5Bhttpauth%5D=on&module%5Bremote%5D=on&module%5Bwebdav%5D=on&module%5Brss%5D=on&module%5Bsitemap%5D=on&step=9&install=67&activate=1" ${STEP}9
+$CURL ${STEP}10
+$CURL ${STEP}11
+
+/etc/init.d/apache2 stop
+
+# remove hardcoded 127.0.0.1 (force dynamic configuration)
+sed -i "s|http://127.0.0.1/main.php||" $ETC/config.php
+
+# stop mysql
+/etc/init.d/mysql stop
+

@@ -35,6 +35,9 @@ php $WEBROOT/installer/index.php -h localhost -u $DB_USER -p $DB_PASS -d $DB_NAM
 
 /usr/lib/inithooks/bin/gallery.py --email="$ADMIN_MAIL" --pass="$ADMIN_PASS"
 
+# Commenting out the cooliris js as it is not reachable
+sed -i '/e.cooliris.com/s/^/#/' $WEBROOT/modules/slideshow/helpers/slideshow_theme.php
+
 # stop mysql
 /etc/init.d/mysql stop
 

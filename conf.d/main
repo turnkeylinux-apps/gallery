@@ -11,7 +11,7 @@ WEBROOT=/var/www/gallery
 
 # configure apache
 a2enmod rewrite
-a2dissite default
+a2dissite 000-default
 a2ensite gallery
 
 # convenience execution variables

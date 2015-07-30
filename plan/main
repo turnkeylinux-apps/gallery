@@ -1,9 +1,10 @@
 #include <turnkey/base>
 #include <turnkey/lamp>
 
-ffmpeg          /* support video uploading */
+//ffmpeg          /* support video uploading */
+libav-tools      /* Jessie has libav instead of ffmpeg */
 
-php5-gd
+imagemagick
 php5-cli
 unzip
 zip

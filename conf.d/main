@@ -24,6 +24,14 @@ MYSQL_ADMIN="mysqladmin --user=root --password=$MYSQL_PASS"
 $MYSQL_ADMIN create $DB_NAME
 $MYSQL_BATCH --execute "grant all privileges on $DB_NAME.* to $DB_USER@localhost identified by '$DB_PASS'; flush privileges;"
 
+# configure php.ini to allow short php tag (<? ?> instead of <?php ?>)
+CONF=/etc/php5
+sed -i 's|short_open_tag =.*|short_open_tag = On|' $CONF/cli/php.ini
+sed -i 's|short_open_tag =.*|short_open_tag = On|' $CONF/apache2/php.ini
+
+# dirty workaround - create ffmpeg symlink (Jessie has libav not ffmpeg)
+ln -s /usr/bin/avconv /usr/bin/ffmpeg
+
 # unpack and configure gallery
 unzip /usr/local/src/gallery*.zip -d /var/www/
 mv /var/www/gallery3 $WEBROOT

@@ -1,3 +1,12 @@
+turnkey-gallery-14.2 (1) turnkey; urgency=low
+
+  * Installed security updates.
+
+  * Note: Please refer to turnkey-core's changelog for changes common to all
+    appliance. Here we only describe changes specific to this appliance.
+
+ -- Stefan Davis <stefan@turnkeylinux.org>  Thu, 29 Jun 2017 08:11:53 +1000
+
 turnkey-gallery-14.1 (1) turnkey; urgency=low
 
   * Installed security updates.

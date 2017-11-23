@@ -19,7 +19,7 @@ MYSQL_BATCH="mysql --user=root --password=$MYSQL_PASS --batch"
 MYSQL_ADMIN="mysqladmin --user=root --password=$MYSQL_PASS"
 
 # create database user with privileges on the database
-/etc/init.d/mysql start
+service mysql start
 
 $MYSQL_ADMIN create $DB_NAME
 $MYSQL_BATCH --execute "grant all privileges on $DB_NAME.* to $DB_USER@localhost identified by '$DB_PASS'; flush privileges;"
@@ -44,7 +44,7 @@ php $WEBROOT/installer/index.php -h localhost -u $DB_USER -p $DB_PASS -d $DB_NAM
 sed -i '/e.cooliris.com/s/^/#/' $WEBROOT/modules/slideshow/helpers/slideshow_theme.php
 
 # stop mysql
-/etc/init.d/mysql stop
+service mysql stop
 
 # cleanup
 rm /usr/local/src/gallery*

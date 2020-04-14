@@ -25,13 +25,13 @@ $MYSQL_ADMIN create $DB_NAME
 $MYSQL_BATCH --execute "grant all privileges on $DB_NAME.* to $DB_USER@localhost identified by '$DB_PASS'; flush privileges;"
 
 # configure php.ini to allow short php tag (<? ?> instead of <?php ?>)
-CONF=/etc/php/7.0
+CONF=/etc/php/7.3
 sed -i 's|short_open_tag =.*|short_open_tag = On|' $CONF/cli/php.ini
 sed -i 's|short_open_tag =.*|short_open_tag = On|' $CONF/apache2/php.ini
 
 # unpack and configure gallery
-unzip /usr/local/src/gallery*.zip -d /var/www/
-mv /var/www/gallery3 $WEBROOT
+unzip /usr/local/src/*.zip -d /var/www/
+mv /var/www/gallery3* $WEBROOT
 
 mkdir -p $WEBROOT/var
 chown www-data:www-data $WEBROOT/var
@@ -40,12 +40,9 @@ php $WEBROOT/installer/index.php -h localhost -u $DB_USER -p $DB_PASS -d $DB_NAM
 
 /usr/lib/inithooks/bin/gallery.py --email="$ADMIN_MAIL" --pass="$ADMIN_PASS"
 
-# Commenting out the cooliris js as it is not reachable
-sed -i '/e.cooliris.com/s/^/#/' $WEBROOT/modules/slideshow/helpers/slideshow_theme.php
-
 # stop mysql
 service mysql stop
 
 # cleanup
-rm /usr/local/src/gallery*
+rm /usr/local/src/*.zip
 

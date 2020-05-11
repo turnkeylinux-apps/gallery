@@ -5,8 +5,10 @@ dl() {
     cd $2; curl -L -f -O $PROXY $1; cd -
 }
 
-VERSION="3.0.9"
-URL="http://downloads.sourceforge.net/gallery/gallery-${VERSION}.zip"
+VERSION="3.1.2"
+#URL="http://downloads.sourceforge.net/gallery/gallery-${VERSION}.zip"
+URL="https://github.com/bwdutton/gallery3/archive/${VERSION}.zip"
+
 
 dl $URL /usr/local/src
 
